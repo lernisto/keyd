@@ -13,7 +13,7 @@ POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d
 
 NAME:= keyparse
 
-all: options $(NAME)
+all: options config.h $(NAME)
 
 options:
 	@echo dwmstatus build options:
@@ -21,11 +21,16 @@ options:
 	@echo "LDFLAGS  = ${LDFLAGS}"
 	@echo "CC       = ${CC}"
 
+debug: CFLAGS += -O0 -g
+debug: CPPFLAGS += -DDEBUG
+debug: all
+
 config.h:
 	@echo creating $@ from config.def.h
 	@cp config.def.h $@
 
 SRC := $(wildcard *.c)
+HDR := $(wildcard *.h)
 OBJ := $(SRC:.c=.o)
 
 %.o : %.c
@@ -49,7 +54,6 @@ $(DEPDIR)/%.d: ;
 -include $(patsubst %,$(DEPDIR)/%.d,$(basename $(SRCS)))
 
 
-
 install:
 	mkdir -p "$(DESTDIR)$(BINPREFIX)"
 	install -D $(NAME) "$(DESTDIR)$(BINPREFIX)"
@@ -66,6 +70,9 @@ doc:
 	a2x -v -d manpage -f manpage -a revnumber=$(VERSION) doc/$(NAME).1.txt
 
 clean:
-	rm -f $(OBJ) $(NAME)
+	rm -f $(OBJ) $(NAME) VERSION
 
-.PHONY: all options install uninstall doc clean
+indent:
+	indent -linux -brs -brf --line-length 200 $(SRC) $(HDR)
+
+.PHONY: all options debug indent install uninstall doc clean

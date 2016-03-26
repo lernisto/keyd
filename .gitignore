@@ -33,4 +33,10 @@
 
 # auto depends
 .d/*
+
+#project specific targets
+build/*
 config.h
+keyparse
+#VERSION should be created by make sdist. use git --describe for building from a repo
+VERSION
