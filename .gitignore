@@ -33,3 +33,4 @@
 
 # auto depends
 .d/*
+config.h
